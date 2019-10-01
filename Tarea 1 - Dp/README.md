@@ -1,6 +1,6 @@
 # Analisis de algoritmos
 Trabajo n° 1 - Realizar mediante backtracking el recorrido de una matriz, encontrando el coste minimo entre las diferencias de cada casilla recorrida, desde 0,0 a M-1,N-1.
-##Ejemplo:
+## Ejemplo:
 1 2 3
 8 7 4
 9 9 5
