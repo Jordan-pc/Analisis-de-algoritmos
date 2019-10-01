@@ -112,6 +112,7 @@ int camino_Minimo(int i, int j, int sum){
 }
 
 int main (){
+    auto start = chrono::steady_clock::now();
     cout <<"Ingrese la cantidad de filas de la matriz"<<endl;
     cin>>M;
     cout <<"Ingrese la cantidad de columnas de la matriz"<<endl;
@@ -128,4 +129,6 @@ int main (){
     camino_Minimo(0,0,0);
     cout<<"El minimo es: "<<minimo<<endl;
     // cout<<"El minimo es: "<<dp[M-1][N-1]<<endl;
+    auto end = chrono::steady_clock::now();
+    cout << "\n\t\tTime taken  = " << chrono::duration_cast<chrono::nanoseconds>(end-start).count() << " [ns]" ;
 }
