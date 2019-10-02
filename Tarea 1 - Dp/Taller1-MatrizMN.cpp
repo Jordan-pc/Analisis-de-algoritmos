@@ -130,5 +130,6 @@ int main (){
     cout<<"El minimo es: "<<minimo<<endl;
     // cout<<"El minimo es: "<<dp[M-1][N-1]<<endl;
     auto end = chrono::steady_clock::now();
-    cout << "\n\t\tTime taken  = " << chrono::duration_cast<chrono::nanoseconds>(end-start).count() << " [ns]" ;
+    cout << "\n\tTiempo total de ejecucion  = " << chrono::duration_cast<chrono::nanoseconds>(end-start).count() << " [ns]"<<endl;
+    system("PAUSE");
 }
