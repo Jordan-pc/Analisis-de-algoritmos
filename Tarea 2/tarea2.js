@@ -46,7 +46,7 @@ let Graham = function(){
             return -1;
         }
         else if (primero.x > segundo.x) {
-            return +1;
+            return 1;
         }
         else if (primero.y < segundo.y) {
             return -1;
