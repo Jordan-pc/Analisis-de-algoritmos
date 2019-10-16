@@ -119,12 +119,12 @@ int main (){
     cin>>N;
     cout<<endl;
     llenar_Aleatorio();
-    for (int i = 0; i < M; i++){
-        for (int j = 0; j < N; j++){
-            cout << Matriz[i][j] << " ";
-        }
-        cout<<endl;
-    }
+    // for (int i = 0; i < M; i++){
+    //     for (int j = 0; j < N; j++){
+    //         cout << Matriz[i][j] << " ";
+    //     }
+    //     cout<<endl;
+    // }
     cout<<endl;
     camino_Minimo(0,0,0);
     cout<<"El minimo es: "<<minimo<<endl;
