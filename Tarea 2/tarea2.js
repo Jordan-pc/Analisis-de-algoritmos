@@ -1,5 +1,10 @@
 var minimo = 1;
-var maximo = 200;
+var maximo = 300;
+var abajo = {x: 0, y:-1};
+var arriba = {x: 0, y: 500};
+var derecha = {x: -1, y:0};
+var izquierda = {x:500, y:0};
+
 
 function numerosAleatorios(){
     puntos = new Array();
@@ -7,7 +12,20 @@ function numerosAleatorios(){
     for (let i = 0; i<CantidadNumeros; i++){
         let punto = {x: minimo + Math.floor(Math.random()*(maximo-minimo)), y: minimo + Math.floor(Math.random()*(maximo-minimo))}
         puntos.push(punto);
+        if (punto.x < izquierda.x) {
+            izquierda = punto;
+        }
+        if (punto.x > derecha.x) {
+            derecha = punto;
+        }
+        if (punto.y < arriba.y) {
+            arriba = punto;
+        }
+        if (punto.y > abajo.y) {
+            abajo = punto;
+        }
     }
+    console.log(arriba,abajo,izquierda,derecha);
 }
 
 function dibujar_punto(dibujo, punto, color) {
@@ -20,8 +38,8 @@ function dibujar_punto(dibujo, punto, color) {
 	dibujo.restore();
 }
 
-function dibujar(){
-    let canvas = document.getElementById("canvas");
+function dibujar(can){
+    let canvas = document.getElementById(can);
     let dibujo = canvas.getContext("2d");
     dibujo.save();
     dibujo.setTransform(1, 0, 0, 1, 0, 0); //crear cuadro ?
@@ -34,8 +52,15 @@ function dibujar(){
 
 let boton_generar = document.getElementById("generar");
 boton_generar.addEventListener('click',()=>{
+    abajo = {x: 0, y:-1};
+    arriba = {x: 0, y: 500};
+    derecha = {x: -1, y:0};
+    izquierda = {x:500, y:0};
+
     numerosAleatorios();
-    dibujar();
+    dibujar("canvas");
+    dibujar("canvas1");
+    dibujar("canvas2");
 });
 
 //Graham
@@ -129,3 +154,44 @@ boton_graham.addEventListener('click',()=>{
     dibujar_graham();
 });
 
+//envolvente
+envolvente = function(){
+    this.pendiente = function(primero,segundo){
+        return (segundo.y-primero.y)/(segundo.x-primero.x);
+    }
+    this.realizar = function(puntos){
+        if (puntos.length<3) {
+            return;
+        }
+        let rutaizq_arrib = new Array();
+        let rutaarr_der = new Array();
+        let rutader_abaj = new Array();
+        let rutaabaj_izq = new Array();
+        for(let i = 0; i<puntos.length; i++){
+            if ((this.pendiente(izquierda,puntos[i])<this.pendiente(izquierda,arriba)) && izquierda.y>puntos[i].y && arriba.x>puntos[i].x) {
+                rutaizq_arrib.push(puntos[i]);
+            }
+            if ((this.pendiente(arriba,puntos[i])<this.pendiente(arriba,derecha)) && derecha.y>puntos[i].y && arriba.x<puntos[i].x) {
+                rutaarr_der.push(puntos[i]);
+            }
+            if ((this.pendiente(derecha,puntos[i])<this.pendiente(derecha,abajo)) && derecha.y<puntos[i].y && abajo.x<puntos[i].x) {
+                rutader_abaj.push(puntos[i]);
+            }
+            if ((this.pendiente(abajo,puntos[i])<this.pendiente(abajo,izquierda)) && izquierda.y<puntos[i].y && abajo.x>puntos[i].x) {
+                rutaabaj_izq.push(puntos[i]);
+            }
+        }
+        console.log(rutaizq_arrib);
+        console.log(rutaarr_der);
+        console.log(rutader_abaj);
+        console.log(rutaabaj_izq);
+        return rutaabaj_izq;
+    }
+}
+
+let boton_envolvente = document.getElementById("envolvente");
+boton_envolvente.addEventListener('click',()=>{
+    let env = new envolvente();
+    let point = env.realizar(puntos);
+    console.log(point);
+});
