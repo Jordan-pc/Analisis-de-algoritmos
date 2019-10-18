@@ -12,14 +12,26 @@ function numerosAleatorios(){
     for (let i = 0; i<CantidadNumeros; i++){
         let punto = {x: minimo + Math.floor(Math.random()*(maximo-minimo)), y: minimo + Math.floor(Math.random()*(maximo-minimo))}
         puntos.push(punto);
+        if (punto.x===izquierda.x && punto.y<izquierda.y) {
+            izquierda = punto;
+        }
         if (punto.x < izquierda.x) {
             izquierda = punto;
+        }
+        if (punto.x===derecha.x && punto.y>derecha.y) {
+            derecha = punto;
         }
         if (punto.x > derecha.x) {
             derecha = punto;
         }
+        if (punto.y===arriba.y && punto.x>arriba.y) {
+            arriba = punto;
+        }
         if (punto.y < arriba.y) {
             arriba = punto;
+        }
+        if (punto.y===abajo.y && punto.x<abajo.y) {
+            abajo = punto;
         }
         if (punto.y > abajo.y) {
             abajo = punto;
@@ -132,6 +144,7 @@ function dibujar_graham(){
     let dibujo = canvas.getContext("2d");
     let grah = new Graham();
     let pts = grah.ordenar(puntos);
+    console.log(pts);
     if(pts.length > 2){
         dibujo.beginPath();
         dibujo.moveTo(pts[0].x,pts[0].y);
@@ -159,14 +172,49 @@ envolvente = function(){
     this.pendiente = function(primero,segundo){
         return (segundo.y-primero.y)/(segundo.x-primero.x);
     }
+    this.comparar_eje1= function (primero,segundo){
+        if (primero.x < segundo.x) {
+            return -1;
+        }
+        else if (primero.x > segundo.x) {
+            return 1;
+        }
+        else if (primero.y < segundo.y) {
+            return -1;
+        }
+        else{
+            return 1;
+        }
+    }
+    this.comparar_eje2= function (primero,segundo){
+        if (primero.x < segundo.x) {
+            return -1;
+        }
+        else if (primero.x > segundo.x) {
+            return 1;
+        }
+        else if (primero.y < segundo.y) {
+            return -1;
+        }
+        else{
+            return 1;
+        }
+    }
+    this.ordenar = function(puntos,eje){
+        return puntos.sort(eje);
+    }
     this.realizar = function(puntos){
         if (puntos.length<3) {
             return;
         }
         let rutaizq_arrib = new Array();
+        rutaizq_arrib.push(izquierda);
         let rutaarr_der = new Array();
+        rutaarr_der.push(arriba);
         let rutader_abaj = new Array();
+        rutader_abaj.push(derecha);
         let rutaabaj_izq = new Array();
+        rutaabaj_izq.push(abajo);
         for(let i = 0; i<puntos.length; i++){
             if ((this.pendiente(izquierda,puntos[i])<this.pendiente(izquierda,arriba)) && izquierda.y>puntos[i].y && arriba.x>puntos[i].x) {
                 rutaizq_arrib.push(puntos[i]);
@@ -181,17 +229,108 @@ envolvente = function(){
                 rutaabaj_izq.push(puntos[i]);
             }
         }
-        console.log(rutaizq_arrib);
-        console.log(rutaarr_der);
-        console.log(rutader_abaj);
-        console.log(rutaabaj_izq);
-        return rutaabaj_izq;
+        rutaizq_arrib.push(arriba);
+        rutaarr_der.push(derecha);
+        rutader_abaj.push(abajo);
+        rutaabaj_izq.push(izquierda);
+        this.ordenar(rutaizq_arrib,this.comparar_eje1);
+        let ruta = new Array();
+        let ruta2 = new Array();
+        let ruta3 = new Array();
+        let ruta4 = new Array();
+        for(let i = 0; i<rutaizq_arrib.length; i++){
+            let a = rutaizq_arrib[i];
+            while(ruta.length >= 2){
+                let b = ruta[ruta.length-1];
+                let c = ruta[ruta.length-2];
+                if ((b.x - c.x)*(a.y - c.y) <= (b.y - c.y)*(a.x - c.x)) {  //determinante
+                    ruta.pop();
+                }
+                else{
+                    break;
+                }
+            }
+            ruta.push(a);
+        }
+        this.ordenar(rutaarr_der,this.comparar_eje2);
+        for(let i = 0; i<rutaarr_der.length; i++){
+            let a = rutaarr_der[i];
+            while(ruta2.length >= 2){
+                let b = ruta2[ruta2.length-1];
+                let c = ruta2[ruta2.length-2];
+                if ((b.x - c.x)*(a.y - c.y) <= (b.y - c.y)*(a.x - c.x)) {  //determinante
+                    ruta2.pop();
+
+                }
+                else{
+                    break;
+                }
+            }
+            ruta2.push(a);
+        }
+        this.ordenar(rutader_abaj,this.comparar_eje2);
+        for(let i = 0; i<rutader_abaj.length; i++){
+            let a = rutader_abaj[i];
+            while(ruta3.length >= 2){
+                let b = ruta3[ruta3.length-1];
+                let c = ruta3[ruta3.length-2];
+                if ((b.x - c.x)*(a.y - c.y) >= (b.y - c.y)*(a.x - c.x)) {  //determinante
+                    ruta3.pop();
+
+                }
+                else{
+                    break;
+                }
+            }
+            ruta3.push(a);
+        }
+        this.ordenar(rutaabaj_izq,this.comparar_eje1);
+        for(let i = 0; i<rutaabaj_izq.length; i++){
+            let a = rutaabaj_izq[i];
+            while(ruta4.length >= 2){
+                let b = ruta4[ruta4.length-1];
+                let c = ruta4[ruta4.length-2];
+                if ((b.x - c.x)*(a.y - c.y) >= (b.y - c.y)*(a.x - c.x)) {  //determinante
+                    ruta4.pop();
+                }
+                else{
+                    break;
+                }
+            }
+            ruta4.push(a);
+        }
+
+        let rev1 = ruta3.reverse();
+        let rev2 = ruta4.reverse();
+        return ruta.concat(ruta2.concat(rev1.concat(rev2)));
+    }
+}
+//fin envolvente
+
+function dibujar_envolvente(){
+    let canvas = document.getElementById("canvas1");
+    let dibujo = canvas.getContext("2d");
+    let env = new envolvente();
+    let pts = env.realizar(puntos);
+    console.log(pts);
+    if(pts.length > 2){
+        dibujo.beginPath();
+        dibujo.moveTo(pts[0].x,pts[0].y);
+        for(let i = 0; i<pts.length; i++){
+            dibujo.lineTo(pts[i].x, pts[i].y);
+        }
+        dibujo.closePath();
+        dibujo.fillStyle = "rgba(200, 0, 0, 0.2)";
+        dibujo.strokeStyle = "rgba(0, 0, 0, 0.5)";
+        dibujo.fill();
+        dibujo.stroke();
+        for (let i=0; i<pts.length; i++) {
+			dibujar_punto(dibujo, pts[i], "rgba(200, 0, 0, 0.8)");
+		}
     }
 }
 
 let boton_envolvente = document.getElementById("envolvente");
 boton_envolvente.addEventListener('click',()=>{
-    let env = new envolvente();
-    let point = env.realizar(puntos);
-    console.log(point);
+    dibujar_envolvente();
 });
