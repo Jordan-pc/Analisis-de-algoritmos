@@ -1,4 +1,4 @@
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +7,15 @@
 </head>
 <body>
     <h1>Tarea analisis de algoritmos</h1>
+    <p>Para probar los metodos es necesario ingresar el número de puntos aleatorios a generar, 
+        despues y darle a generar puntos, despues para realizar cada metodo es necesario darle
+        al botón, y con esto se mostrará el resultado final despues de realizar dicho algoritmo.
+    </p>
+    <input id="cantidad_puntos" type="number" value="30" />
+    <button id= "generar"">Generar puntos</button>
     <h2>Graham</h2>
     <canvas id="canvas" width="300" height="300"></canvas>
     <br>
-    <input id="cantidad_puntos" type="number" value="30" />
-    <button id= "generar"">Generar puntos</button>
     <button id="graham">Realizar método Graham</button>
     <br>
     <h2>Envolvente</h2>
@@ -19,6 +23,7 @@
     <br>
     <button id="envolvente">Realizar método envolvente</button>
     <br>
+    <h2>Pendulo</h2>
     <canvas id="canvas2" width="300" height="300"></canvas>
     <br>
     <button id="pendulo">Realizar método pendulo</button>

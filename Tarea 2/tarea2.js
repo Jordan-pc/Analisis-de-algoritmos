@@ -4,13 +4,15 @@ var abajo = {x: 0, y:-1};
 var arriba = {x: 0, y: 500};
 var derecha = {x: -1, y:0};
 var izquierda = {x:500, y:0};
+var last = {x:0, y:0}
 
-
+//Funcion que genera los puntos aleatorios
 function numerosAleatorios(){
     puntos = new Array();
     let CantidadNumeros = document.getElementById("cantidad_puntos").value;
     for (let i = 0; i<CantidadNumeros; i++){
         let punto = {x: minimo + Math.floor(Math.random()*(maximo-minimo)), y: minimo + Math.floor(Math.random()*(maximo-minimo))}
+        last = punto;
         puntos.push(punto);
         if (punto.x===izquierda.x && punto.y<izquierda.y) {
             izquierda = punto;
@@ -37,9 +39,9 @@ function numerosAleatorios(){
             abajo = punto;
         }
     }
-    console.log(arriba,abajo,izquierda,derecha);
+    console.log(arriba,abajo,izquierda,derecha,last);
 }
-
+//funcion para dibujar puntos
 function dibujar_punto(dibujo, punto, color) {
 	dibujo.save();
 	dibujo.fillStyle = color;
@@ -49,19 +51,19 @@ function dibujar_punto(dibujo, punto, color) {
 	dibujo.fill();
 	dibujo.restore();
 }
-
+//funcion para crear el cuadro y modificarlo
 function dibujar(can){
     let canvas = document.getElementById(can);
     let dibujo = canvas.getContext("2d");
     dibujo.save();
-    dibujo.setTransform(1, 0, 0, 1, 0, 0); //crear cuadro ?
+    dibujo.setTransform(1, 0, 0, 1, 0, 0); //crear cuadro 
     dibujo.clearRect(0, 0, canvas.width, canvas.height); // limpiar cuadro
     dibujo.restore();
     for (let i=0; i<puntos.length; i++) {
 		dibujar_punto(dibujo, puntos[i], "rgba(0,0,255,255)");
 	}
 }
-
+// toma el botón generar y dibuja los cuadros con los puntos generados
 let boton_generar = document.getElementById("generar");
 boton_generar.addEventListener('click',()=>{
     abajo = {x: 0, y:-1};
@@ -75,8 +77,7 @@ boton_generar.addEventListener('click',()=>{
     dibujar("canvas2");
 });
 
-//Graham
-
+//Graham - Método de graham
 let Graham = function(){
     this.comparar = function (primero,segundo){
         if (primero.x < segundo.x) {
@@ -138,7 +139,7 @@ let Graham = function(){
 }
 //fin graham
 
-
+// funcion que dibuja el resultado del método de graham
 function dibujar_graham(){
     let canvas = document.getElementById("canvas");
     let dibujo = canvas.getContext("2d");
@@ -161,15 +162,15 @@ function dibujar_graham(){
 		}
     }
 }
-
+//hace que el botón del método graham llame al objeto que realiza los calculos
 let boton_graham = document.getElementById("graham");
 boton_graham.addEventListener('click',()=>{
     dibujar_graham();
 });
 
-//envolvente
+//Envolvente - Realiza el método envolvente
 envolvente = function(){
-    this.pendiente = function(primero,segundo){
+    this.pendiente = function(primero,segundo){ //pendiente
         return (segundo.y-primero.y)/(segundo.x-primero.x);
     }
     this.comparar_eje1= function (primero,segundo){
@@ -238,7 +239,7 @@ envolvente = function(){
         let ruta2 = new Array();
         let ruta3 = new Array();
         let ruta4 = new Array();
-        for(let i = 0; i<rutaizq_arrib.length; i++){
+        for(let i = 0; i<rutaizq_arrib.length; i++){ //calcula la ruta del eje 1
             let a = rutaizq_arrib[i];
             while(ruta.length >= 2){
                 let b = ruta[ruta.length-1];
@@ -253,14 +254,13 @@ envolvente = function(){
             ruta.push(a);
         }
         this.ordenar(rutaarr_der,this.comparar_eje2);
-        for(let i = 0; i<rutaarr_der.length; i++){
+        for(let i = 0; i<rutaarr_der.length; i++){ //calcula la ruta del eje 2
             let a = rutaarr_der[i];
             while(ruta2.length >= 2){
                 let b = ruta2[ruta2.length-1];
                 let c = ruta2[ruta2.length-2];
                 if ((b.x - c.x)*(a.y - c.y) <= (b.y - c.y)*(a.x - c.x)) {  //determinante
                     ruta2.pop();
-
                 }
                 else{
                     break;
@@ -269,7 +269,7 @@ envolvente = function(){
             ruta2.push(a);
         }
         this.ordenar(rutader_abaj,this.comparar_eje2);
-        for(let i = 0; i<rutader_abaj.length; i++){
+        for(let i = 0; i<rutader_abaj.length; i++){ //calcula la ruta del eje 3
             let a = rutader_abaj[i];
             while(ruta3.length >= 2){
                 let b = ruta3[ruta3.length-1];
@@ -285,7 +285,7 @@ envolvente = function(){
             ruta3.push(a);
         }
         this.ordenar(rutaabaj_izq,this.comparar_eje1);
-        for(let i = 0; i<rutaabaj_izq.length; i++){
+        for(let i = 0; i<rutaabaj_izq.length; i++){ //calcula la ruta del eje 4
             let a = rutaabaj_izq[i];
             while(ruta4.length >= 2){
                 let b = ruta4[ruta4.length-1];
@@ -306,7 +306,7 @@ envolvente = function(){
     }
 }
 //fin envolvente
-
+//funcion que dibuja el resultado final del método envolvente
 function dibujar_envolvente(){
     let canvas = document.getElementById("canvas1");
     let dibujo = canvas.getContext("2d");
@@ -329,8 +329,161 @@ function dibujar_envolvente(){
 		}
     }
 }
-
+//botón que llama al metodo envolvente
 let boton_envolvente = document.getElementById("envolvente");
 boton_envolvente.addEventListener('click',()=>{
     dibujar_envolvente();
+});
+//Péndulo - método del péndulo
+pendulo = function(){
+    this.pendiente = function(primero,segundo){ //calculo de la pendiente
+        return (segundo.y-primero.y)/(segundo.x-primero.x);
+    }
+    this.realizar = function(puntos){
+        if (puntos.length<3) {
+            return;
+        }
+        let ruta = new Array();
+        //ruta.push(last);
+        let eje1 = 0;
+        let punto = last;
+        while(eje1<puntos.length){ //péndulo desde punto aleatorio hasta punto más alto
+            eje1 = 0;
+            let añadir = Infinity;
+            for (let i = 0; i<puntos.length; i++){
+                if (this.pendiente(last,puntos[i])<=añadir && puntos[i].x >= last.x && puntos[i].y <= last.y) {
+                    añadir = this.pendiente(last,puntos[i]);
+                    punto = puntos[i];
+                    eje1--;
+                }
+                eje1++;
+            }
+            //ruta.push(punto);
+            last = punto;
+            añadir = Infinity;
+        }
+        //ruta.push(last);
+        let eje2  = 0;
+        while(eje2<puntos.length){ //péndulo desde punto aleatorio hasta punto más a la derecha
+            eje2 = 0;
+            let añadir = Infinity;
+            for (let i = 0; i<puntos.length; i++){
+                if (this.pendiente(last,puntos[i])<=añadir && puntos[i].x >= last.x && puntos[i].y >= last.y) {
+                    añadir = this.pendiente(last,puntos[i]);
+                    punto = puntos[i];
+                    eje2--;
+                }
+                eje2++;
+            }
+            //ruta.push(punto);
+            last = punto;
+            añadir = Infinity;
+        }
+        ruta.push(last);
+        let eje3 = 0;
+        while(eje3<puntos.length){ //péndulo desde la derecha hasta abajo - eje 3
+            eje3 = 0;
+            let añadir = Infinity;
+            for (let i = 0; i<puntos.length; i++){
+                if (this.pendiente(last,puntos[i])<=añadir && puntos[i].x <= last.x && puntos[i].y >= last.y) {
+                    añadir = this.pendiente(last,puntos[i]);
+                    punto = puntos[i];
+                    eje3--;
+                }
+                eje3++;
+            }
+            ruta.push(punto);
+            last = punto;
+            añadir = Infinity;
+        }
+        let eje4 = 0;
+        while(eje4<puntos.length){ //péndulo desde abajo hasta la izquierda - eje 4
+            eje4 = 0;
+            let añadir = Infinity;
+            for (let i = 0; i<puntos.length; i++){
+                if (this.pendiente(last,puntos[i])<=añadir && puntos[i].x <= last.x && puntos[i].y <= last.y) {
+                    añadir = this.pendiente(last,puntos[i]);
+                    punto = puntos[i];
+                    eje4--;
+                    //console.log(añadir , 'menos',punto);
+                    if (añadir === -Infinity && punto.x !== izquierda.x && repetir < 5) {
+                        añadir = auxiliar2
+                        punto = auxiliar1
+                        eje4--;
+                        //console.log('bugfix',añadir,punto);
+                        repetir++;
+                    }
+                }
+                var auxiliar1 = punto;
+                var auxiliar2 = añadir;
+                eje4++;
+            }
+            repetir = 0;
+            ruta.push(punto);
+            last = punto;
+            añadir = Infinity;
+        }
+        let rectificar = 0;
+        while(rectificar<puntos.length){ //rectificación del eje 1
+            rectificar = 0;
+            let añadir = Infinity;
+            for (let i = 0; i<puntos.length; i++){
+                if (this.pendiente(last,puntos[i])<=añadir && puntos[i].x >= last.x && puntos[i].y <= last.y) {
+                    añadir = this.pendiente(last,puntos[i]);
+                    punto = puntos[i];
+                    rectificar--;
+                }
+                rectificar++;
+            }
+            ruta.push(punto);
+            last = punto;
+            añadir = Infinity;
+        }
+        rectificar = 0;
+        while(rectificar<puntos.length){ //rectificación del eje 2
+            rectificar = 0;
+            let añadir = Infinity;
+            for (let i = 0; i<puntos.length; i++){
+                if (this.pendiente(last,puntos[i])<=añadir && puntos[i].x >= last.x && puntos[i].y >= last.y) {
+                    añadir = this.pendiente(last,puntos[i]);
+                    punto = puntos[i];
+                    rectificar--;
+                }
+                rectificar++;
+            }
+            ruta.push(punto);
+            last = punto;
+            añadir = Infinity;
+        }
+        return ruta;
+    }
+}
+// fin péndulo
+// función que dibuja el método péndulo
+function dibujar_pendulo(){
+    let canvas = document.getElementById("canvas2");
+    let dibujo = canvas.getContext("2d");
+    let env = new pendulo();
+    let pts = env.realizar(puntos);
+    console.log(pts);
+    if(pts.length > 2){
+        dibujo.beginPath();
+        dibujo.moveTo(pts[0].x,pts[0].y);
+        for(let i = 0; i<pts.length; i++){
+            dibujo.lineTo(pts[i].x, pts[i].y);
+        }
+        dibujo.closePath();
+        dibujo.fillStyle = "rgba(200, 0, 0, 0.2)";
+        dibujo.strokeStyle = "rgba(0, 0, 0, 0.5)";
+        dibujo.fill();
+        dibujo.stroke();
+        for (let i=0; i<pts.length; i++) {
+			dibujar_punto(dibujo, pts[i], "rgba(200, 0, 0, 0.8)");
+		}
+    }
+}
+//botón que llama a la función que dibuja el resultado del método péndulo
+let boton_pendulo = document.getElementById("pendulo");
+boton_pendulo.addEventListener('click',()=>{
+    dibujar_pendulo();
 });
